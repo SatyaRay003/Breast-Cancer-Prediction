@@ -28,30 +28,38 @@ model_map = {
 
 # Page Config
 st.set_page_config(page_title="Breast Cancer Prediction App", layout="wide")
-st.title("Breast Cancer Prediction Application")
-st.write("Using the numerical features extracted from cell nucleus image, \
-We can predict whether the tumor is benign or malignant.")
+st.title("Breast Cancer Prediction Application", text_alignment="center")
+st.markdown("<center>Using the numerical features extracted from cell nucleus image, \
+We can predict whether the tumor is benign or malignant.</center>", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# Sidebar - Model Selection
-st.sidebar.header("⚙️ Model Selection")
-model_option = st.sidebar.selectbox(
-    "Choose Classification Model",
-    [
-        "Logistic Regression",
-        "Decision Tree Classifier",
-        "K-Nearest Neighbor",
-        "Naive Bayes (Gaussian)",
-        "Random Forest (Ensemble)",
-        "XGBoost (Ensemble)"
-    ]
-)
-
 # Dataset Upload
-st.subheader("📁 Upload Test Dataset (CSV Only)")
-uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.subheader("Upload Test Dataset:")
+with col2:
+    uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
 
+
+# Model Selection
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.subheader("Choose Classification Model:")
+with col2:
+    model_option = st.selectbox(
+        "Models",
+        [
+            "Logistic Regression",
+            "Decision Tree Classifier",
+            "K-Nearest Neighbor",
+            "Naive Bayes (Gaussian)",
+            "Random Forest (Ensemble)",
+            "XGBoost (Ensemble)"
+        ]
+    )
+
+# Process uploaded file
 if uploaded_file is not None:
     try:
         # Read the uploaded test csv file
@@ -83,34 +91,22 @@ if uploaded_file is not None:
             y_pred = selected_models.predict(X_test)
 
         st.markdown("---")
-        st.subheader(f"📈 Selected Model: {model_option}")
+        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
 
         # Evaluation Metrics
-        st.markdown("---")
-        st.subheader("📈 Evaluation Metrics:")
-
-        accuracy = accuracy_score(y_test, y_pred)
-        auc_score = roc_auc_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred, average="weighted")
-        recall = recall_score(y_test, y_pred, average="weighted")
-        f1 = f1_score(y_test, y_pred, average="weighted")
-        mcc_score = matthews_corrcoef(y_test, y_pred)
-
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
-        col1.metric("Accuracy", f"{accuracy:.4f}")
-        col2.metric("AUC Score", f"{auc_score:.4f}")
-        col3.metric("Precision", f"{precision:.4f}")
-        col4.metric("Recall", f"{recall:.4f}")
-        col5.metric("F1-Score", f"{f1:.4f}")
-        col6.metric("MCC Score", f"{mcc_score:.4f}")
-
-        st.markdown("---")
-        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+        with col1:
+            st.header("Evaluation Metrics:")
+            st.subheader(f"Accuracy : {accuracy_score(y_test, y_pred):.4f}")
+            st.subheader(f"AUC Score: {roc_auc_score(y_test, y_pred):.4f}")
+            st.subheader(f"Precision: {precision_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"Recall   : {recall_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"F1-Score : {f1_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"MCC Score: {matthews_corrcoef(y_test, y_pred):.4f}")
 
         # Confusion Matrix
         cm = confusion_matrix(y_test, y_pred)
-        with col1:
-            st.subheader("🔎 Confusion Matrix:")
+        with col2:
+            st.header("Confusion Matrix:")
             fig, ax = plt.subplots()
             disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Benign', 'Malignant'])
             disp.plot(ax=ax, cmap='Blues', colorbar=False)
@@ -118,8 +114,8 @@ if uploaded_file is not None:
             st.pyplot(fig)
 
         # Classification Report
-        with col2:
-            st.subheader("📄 Classification Report:")
+        with col3:
+            st.header("Classification Report:")
             report = classification_report(y_test, y_pred)
             st.text(report)
 
