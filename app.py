@@ -61,66 +61,75 @@ with col2:
 
 # Process uploaded file
 if uploaded_file is not None:
-    try:
-        # Read the uploaded test csv file
-        data = pd.read_csv(uploaded_file)
-
-        # Basic validation
-        if data.shape[-1] < 2:
-            st.error("Dataset must contain at least 1 feature column and 1 target column.")
-            st.stop()
-
-        # Extract the features and target attribute
-        X_test = data.iloc[:, :-1]
-        y_test = data.iloc[:, -1]
-
-        # Scale the features
-        X_test_scaled = ""
-        try:
-            X_test_scaled = scaler.transform(X_test)
-        except ValueError as val_error:
-            logging.error(f"{val_error} for Data with Shape:{data.shape}")
-            st.error(f"{val_error.args[0]}")
-            st.stop()
-
-        # Make Prediction using selected Model
-        selected_models = model_map[str(model_option)]
-        if model_option in ["Logistic Regression", "K-Nearest Neighbor"]:
-            y_pred = selected_models.predict(X_test_scaled)
-        else:
-            y_pred = selected_models.predict(X_test)
-
-        st.markdown("---")
-        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
-
-        # Evaluation Metrics
-        with col1:
-            st.header("Evaluation Metrics:")
-            st.subheader(f"Accuracy : {accuracy_score(y_test, y_pred):.4f}")
-            st.subheader(f"AUC Score: {roc_auc_score(y_test, y_pred):.4f}")
-            st.subheader(f"Precision: {precision_score(y_test, y_pred, average="weighted"):.4f}")
-            st.subheader(f"Recall   : {recall_score(y_test, y_pred, average="weighted"):.4f}")
-            st.subheader(f"F1-Score : {f1_score(y_test, y_pred, average="weighted"):.4f}")
-            st.subheader(f"MCC Score: {matthews_corrcoef(y_test, y_pred):.4f}")
-
-        # Confusion Matrix
-        cm = confusion_matrix(y_test, y_pred)
-        with col2:
-            st.header("Confusion Matrix:")
-            fig, ax = plt.subplots()
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Benign', 'Malignant'])
-            disp.plot(ax=ax, cmap='Blues', colorbar=False)
-            plt.tight_layout()
-            st.pyplot(fig)
-
-        # Classification Report
-        with col3:
-            st.header("Classification Report:")
-            report = classification_report(y_test, y_pred)
-            st.text(report)
-
-    except Exception as error:
-        logging.error(error)
-        st.error("Sorry! Something went wrong!")
+    # Read the uploaded test csv file
+    data = pd.read_csv(uploaded_file)
+    message = "Uploaded test data"
 else:
-    st.info("Please upload a CSV dataset to begin.")
+    # Default test Data
+    data = pd.read_csv('test.csv')
+    message = "Default test data"
+
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.subheader("Data Source:")
+with col2:
+    st.subheader(message)
+
+try:
+    # Basic validation
+    if data.shape[-1] < 2:
+        st.error("Dataset must contain at least 1 feature column and 1 target column.")
+        st.stop()
+
+    # Extract the features and target attribute
+    X_test = data.iloc[:, :-1]
+    y_test = data.iloc[:, -1]
+
+    # Scale the features
+    X_test_scaled = ""
+    try:
+        X_test_scaled = scaler.transform(X_test)
+    except ValueError as val_error:
+        logging.error(f"{val_error} for Data with Shape:{data.shape}")
+        st.error(f"{val_error.args[0]}")
+        st.stop()
+
+    # Make Prediction using selected Model
+    selected_models = model_map[str(model_option)]
+    if model_option in ["Logistic Regression", "K-Nearest Neighbor"]:
+        y_pred = selected_models.predict(X_test_scaled)
+    else:
+        y_pred = selected_models.predict(X_test)
+
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+
+    # Evaluation Metrics
+    with col1:
+        st.header("Evaluation Metrics:")
+        st.subheader(f"Accuracy : {accuracy_score(y_test, y_pred):.4f}")
+        st.subheader(f"AUC Score: {roc_auc_score(y_test, y_pred):.4f}")
+        st.subheader(f"Precision: {precision_score(y_test, y_pred, average="weighted"):.4f}")
+        st.subheader(f"Recall   : {recall_score(y_test, y_pred, average="weighted"):.4f}")
+        st.subheader(f"F1-Score : {f1_score(y_test, y_pred, average="weighted"):.4f}")
+        st.subheader(f"MCC Score: {matthews_corrcoef(y_test, y_pred):.4f}")
+
+    # Confusion Matrix
+    cm = confusion_matrix(y_test, y_pred)
+    with col2:
+        st.header("Confusion Matrix:")
+        fig, ax = plt.subplots()
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Benign', 'Malignant'])
+        disp.plot(ax=ax, cmap='Blues', colorbar=False)
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    # Classification Report
+    with col3:
+        st.header("Classification Report:")
+        report = classification_report(y_test, y_pred)
+        st.text(report)
+
+except Exception as error:
+    logging.error(error)
+    st.error("Sorry! Something went wrong!")
