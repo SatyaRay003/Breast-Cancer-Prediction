@@ -28,14 +28,14 @@ largest values) of these features were computed for each image,
 resulting in 30 features.
 
 ## Models used:
-|ML Model Name|Accuracy|Precision|Recall|F1 Score|AUC Score|MCC Score|
+|ML Model Name|Accuracy|AUC Score|Precision|Recall|F1 Score|MCC Score|
 |---|---|---|---|---|---|---|
-|Logistic Regression|0\.9737|0\.9762|0\.9535|0\.9647|0\.9697|0\.9439|
-|Decision Tree|0\.9474|0\.9302|0\.9302|0\.9302|0\.9440|0\.8880|
-|K-Nearest Neighbor|0\.9474|0\.9302|0\.9302|0\.9302|0\.9440|0\.8880|
-|Gaussian Naive Bayes|0\.9649|0\.9756|0\.9302|0\.9524|0\.9581|0\.9253|
-|Random Forest|0\.9649|0\.9756|0\.9302|0\.9524|0\.9581|0\.9253|
-|XG Boost|0\.9561|0\.9524|0\.9302|0\.9412|0\.9510|0\.9064|
+|Logistic Regression|0\.9649|0\.9638|0\.9574|0\.9574|0\.9574|0\.9276|
+|Decision Tree|0\.9123|0\.9158|0\.8627|0\.9362|0\.8980|0\.8234|
+|K-Nearest Neighbor|0\.9561|0\.9468|1\.0000|0\.8936|0\.9438|0\.9119|
+|Gaussian Naive Bayes|0\.9298|0\.9276|0\.9149|0\.9149|0\.9149|0\.8552|
+|Random Forest|0\.9737|0\.9744|0\.9583|0\.9787|0\.9684|0\.9460|
+|XG Boost|0\.9825|0\.9819|0\.9787|0\.9787|0\.9787|0\.9638|
 
 
 ## Observations of Models Performance:
@@ -45,14 +45,14 @@ can lead to severe consequences for a patient. For this reason, to reduce the ri
 we should consider **Recall** as our primary metric to compare the performance of different machine learning models.
 
 
-|ML Model Name| Observation about model performance                                                        |
-|---|--------------------------------------------------------------------------------------------|
-|Logistic Regression| Amounf all the model, Logistic Regression model performed best on Recall value with 0.9535 |
-|Decision Tree|                                                                                   |
-|K-Nearest Neighbor|                                                                                    |
-|Gaussian Naive Bayes|                                                                               |
-|Random Forest|                                                                               |
-|XG Boost|                                                                                   |
+|ML Model Name| Observation about model performance                                                                                                                                                                                 |
+|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Logistic Regression| The Logistic Regression model performed significantly good with 0.9574 Recall value. In other evaluation metrics also it performed well making it 3rd best model amoung all.                                        |
+|Decision Tree| The Decision Tree model performed average in terms of Recall value (0.9362) comparing with other models. But it completed training within 0.0474 seconds making it 2nd fastest model with respect to training time. |
+|K-Nearest Neighbor| The K-Nearest Neighbour model performed wrost amoung all the models with 0.8936 Recall value.                                                                                                                       |
+|Gaussian Naive Bayes| The Gaussian Naive Bayes performed below average as compare to other machine learning models but completed training fastest within 0.0040 seconds.                                                                  |
+|Random Forest| The Random Forest model performed best in Recall Value (0.9787) amoung all the models and 2nd best with respect to all the evaluation metrics.                                                                      |
+|XG Boost| The XGBoost model performed best amoung all, consistently over all the evaluation metrics and specifically with 0.9787 Recall value making it most prefferable for medical diagnosis of Breast Cancer detection.    |
 
 
 
