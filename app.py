@@ -137,7 +137,7 @@ def predict(data):
         st.error("Sorry! Something went wrong!")
 
 
-if st.button("Predict"):
+if uploaded_file:
     predict(data)
 else:
     predict(data)
