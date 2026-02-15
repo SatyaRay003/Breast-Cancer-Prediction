@@ -75,61 +75,70 @@ with col1:
 with col2:
     st.subheader(message)
 
-try:
-    # Basic validation
-    if data.shape[-1] < 2:
-        st.error("Dataset must contain at least 1 feature column and 1 target column.")
-        st.stop()
 
-    # Extract the features and target attribute
-    X_test = data.iloc[:, :-1]
-    y_test = data.iloc[:, -1]
-
-    # Scale the features
-    X_test_scaled = ""
+def predict(data):
     try:
-        X_test_scaled = scaler.transform(X_test)
-    except ValueError as val_error:
-        logging.error(f"{val_error} for Data with Shape:{data.shape}")
-        st.error(f"{val_error.args[0]}")
-        st.stop()
+        # Basic validation
+        if data.shape[-1] < 2:
+            st.error("Dataset must contain at least 1 feature column and 1 target column.")
+            st.stop()
 
-    # Make Prediction using selected Model
-    selected_models = model_map[str(model_option)]
-    if model_option in ["Logistic Regression", "K-Nearest Neighbor"]:
-        y_pred = selected_models.predict(X_test_scaled)
-    else:
-        y_pred = selected_models.predict(X_test)
+        # Extract the features and target attribute
+        X_test = data.iloc[:, :-1]
+        y_test = data.iloc[:, -1]
 
-    st.markdown("---")
-    col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+        # Scale the features
+        X_test_scaled = ""
+        try:
+            X_test_scaled = scaler.transform(X_test)
+        except ValueError as val_error:
+            logging.error(f"{val_error} for Data with Shape:{data.shape}")
+            st.error(f"{val_error.args[0]}")
+            st.stop()
 
-    # Evaluation Metrics
-    with col1:
-        st.header("Evaluation Metrics:")
-        st.subheader(f"Accuracy : {accuracy_score(y_test, y_pred):.4f}")
-        st.subheader(f"AUC Score: {roc_auc_score(y_test, y_pred):.4f}")
-        st.subheader(f"Precision: {precision_score(y_test, y_pred, average="weighted"):.4f}")
-        st.subheader(f"Recall   : {recall_score(y_test, y_pred, average="weighted"):.4f}")
-        st.subheader(f"F1-Score : {f1_score(y_test, y_pred, average="weighted"):.4f}")
-        st.subheader(f"MCC Score: {matthews_corrcoef(y_test, y_pred):.4f}")
+        # Make Prediction using selected Model
+        selected_models = model_map[str(model_option)]
+        if model_option in ["Logistic Regression", "K-Nearest Neighbor"]:
+            y_pred = selected_models.predict(X_test_scaled)
+        else:
+            y_pred = selected_models.predict(X_test)
 
-    # Confusion Matrix
-    cm = confusion_matrix(y_test, y_pred)
-    with col2:
-        st.header("Confusion Matrix:")
-        fig, ax = plt.subplots()
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Benign', 'Malignant'])
-        disp.plot(ax=ax, cmap='Blues', colorbar=False)
-        plt.tight_layout()
-        st.pyplot(fig)
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
 
-    # Classification Report
-    with col3:
-        st.header("Classification Report:")
-        report = classification_report(y_test, y_pred)
-        st.text(report)
+        # Evaluation Metrics
+        with col1:
+            st.header("Evaluation Metrics:")
+            st.subheader(f"Accuracy : {accuracy_score(y_test, y_pred):.4f}")
+            st.subheader(f"AUC Score: {roc_auc_score(y_test, y_pred):.4f}")
+            st.subheader(f"Precision: {precision_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"Recall   : {recall_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"F1-Score : {f1_score(y_test, y_pred, average="weighted"):.4f}")
+            st.subheader(f"MCC Score: {matthews_corrcoef(y_test, y_pred):.4f}")
 
-except Exception as error:
-    logging.error(error)
-    st.error("Sorry! Something went wrong!")
+        # Confusion Matrix
+        cm = confusion_matrix(y_test, y_pred)
+        with col2:
+            st.header("Confusion Matrix:")
+            fig, ax = plt.subplots()
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Benign', 'Malignant'])
+            disp.plot(ax=ax, cmap='Blues', colorbar=False)
+            plt.tight_layout()
+            st.pyplot(fig)
+
+        # Classification Report
+        with col3:
+            st.header("Classification Report:")
+            report = classification_report(y_test, y_pred)
+            st.text(report)
+
+    except Exception as error:
+        logging.error(error)
+        st.error("Sorry! Something went wrong!")
+
+
+if st.button("Predict"):
+    predict(data)
+else:
+    predict(data)
+
